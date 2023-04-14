@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface TagMapper {
-    @Select("select * from my_tag")
+    @Select("select * from my_tag where del_fag=0")
     List<Tag> selectAll();
 
     @Select("SELECT my_tag.id,my_tag.tag_name from my_article JOIN my_tag_article ON my_article.id=my_tag_article.article_id JOIN my_tag ON my_tag_article.tag_id=my_tag.id where my_article.id=#{id}")

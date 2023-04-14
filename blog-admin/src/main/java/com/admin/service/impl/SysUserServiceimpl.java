@@ -5,6 +5,9 @@ import com.admin.dao.pojo.SysUser;
 import com.admin.service.SysUserService;
 import com.admin.util.JwtUtil;
 import com.alibaba.fastjson2.JSON;
+import com.framework.dao.pojo.Comment;
+
+import com.framework.vo.Result;
 import com.framework.vo.SysUserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -38,6 +42,12 @@ public class SysUserServiceimpl implements SysUserService {
 
 
         return sysUser;
+    }
+
+    @Override
+    public Result selectAllUser() {
+        List<SysUser> commentList=sysUserMapper.selectAllUser();
+        return null;
     }
 
     private SysUserVo copyUser(SysUser sysUser) {

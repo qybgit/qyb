@@ -1,9 +1,13 @@
 package com.admin.dao.mapper;
 
+
+
 import com.admin.dao.pojo.SysUser;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface SysUserMapper {
@@ -16,4 +20,7 @@ public interface SysUserMapper {
 
     @Select("select * from my_sys_user where nickname=#{nickName}")
     SysUser selectUSerByName(String nickName);
+
+    @Select("select * from my_sys_user")
+    List<SysUser> selectAllUser();
 }

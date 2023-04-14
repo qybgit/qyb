@@ -1,5 +1,6 @@
 package com.admin.service;
 
+import com.admin.dao.mapper.MenuMapper;
 import com.admin.dao.pojo.LoginUser;
 import com.admin.dao.pojo.SysUser;
 import org.apache.commons.lang.StringUtils;
@@ -14,20 +15,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Resource
     SysUserService service;
-
+    @Resource
+    MenuMapper menuMapper;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("authorization");
         if (StringUtils.isBlank(token)) {
-//            Result result = new Result(400, "请登录", null);
-//            response.setContentType("application/json;charset=utf-8");
-//            response.getWriter().print(JSON.toJSON(result));
-
             filterChain.doFilter(request, response);
             return;
         }
@@ -35,14 +34,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SysUser sysUser;
         sysUser = service.checkToken(token);
         if (sysUser == null) {
-//            Result result = new Result(407, "token失效请重新登录", null);
-//            response.setContentType("application/json;charset=utf-8");
-//            response.getWriter().print(JSON.toJSON(result));
             filterChain.doFilter(request, response);
             return;
         }
         sysUser.setToken(token);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(new LoginUser(sysUser), null, null);
+        List<String> permission;
+        if (sysUser.getType()==1){
+             permission=menuMapper.selectPermsByUserID(sysUser.getId());
+        }else {
+            permission=null;
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(new LoginUser(sysUser,permission), null, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
     }

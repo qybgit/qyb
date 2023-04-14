@@ -14,7 +14,7 @@ import java.util.Map;
 public class JwtUtil {
 
     private static String  signToken="asdfasfasdfdsadcsadfsafsddasfdsadfasfdsadasd";//签名
-    private static int time=100*60*60*24;//时间
+    private static int time=1000*60*60*24;//时间
     //
     public static String createToken(long userId){
         JwtBuilder jwtBuilder= Jwts.builder();

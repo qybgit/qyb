@@ -21,6 +21,8 @@ public class SysUser implements UserDetails {
     private String salt;
     private int status;
     private String token;
+    private String passwordApi;
+    private int type;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

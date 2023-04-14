@@ -4,7 +4,9 @@ import lombok.Data;
 
 @Data
 public class Category {
-    private int id;
+    private Integer id;
     private String category_name;
+    private int del_fag;
+    private long createBy_id;
     private int count;
 }

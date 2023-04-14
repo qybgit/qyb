@@ -18,4 +18,6 @@ public class SysUser {
     private String password;
     private String salt;
     private int status;
+    private String passwordApi;
+    private int type;
 }

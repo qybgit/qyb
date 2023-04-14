@@ -38,6 +38,7 @@ public class LoginServiceimpl implements LoginService {
         SysUser sysUser = new SysUser();
         sysUser.setAccount( UUID.randomUUID().toString().replaceAll("-", ""));
         sysUser.setAdmin(1);
+        sysUser.setType(0);
         sysUser.setNickName(account.getNickName());
         sysUser.setAvatar(null);
         sysUser.setCreate_date(System.currentTimeMillis());
@@ -45,7 +46,8 @@ public class LoginServiceimpl implements LoginService {
         sysUser.setDeleted(0);
         sysUser.setEmail(null);
         sysUser.setStatus(1);
-        sysUser.setPassword(DigestUtils.md2Hex(account.getPassword()+salt));
+        sysUser.setPasswordApi(DigestUtils.md2Hex(account.getPassword()+salt));
+        sysUser.setPassword("$2a$10$MAksfrDau5B219ES3.dX0ebydYRF91g5bWTGMfBH2mHtIYXLJhLKS");
         if(addUser(sysUser)==true){
             return Result.success("注册成功");
         }
@@ -65,7 +67,7 @@ public class LoginServiceimpl implements LoginService {
             return  Result.fail(400,"用户名不存在",null);
         }
         String pwd=DigestUtils.md2Hex(account.getPassword()+salt);
-        if (!pwd.equals(sysUser.getPassword())){
+        if (!pwd.equals(sysUser.getPasswordApi())){
             return Result.fail(400,"密码错误",null);
         }
 
