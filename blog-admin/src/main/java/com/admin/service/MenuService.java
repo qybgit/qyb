@@ -6,4 +6,8 @@ public interface MenuService {
     Result getInfo();
 
     Result getRouters();
+
+    Result findMenus();
+
+    Result findMenu(Long id);
 }

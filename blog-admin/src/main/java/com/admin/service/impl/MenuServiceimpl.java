@@ -23,49 +23,67 @@ public class MenuServiceimpl implements MenuService {
     MenuMapper menuMapper;
     @Resource
     RolesService rolesService;
+
     @Override
     public Result getInfo() {
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<String> perms;
-        if (loginUser.getUser().getId()==1404448588146192411l){
-            perms=menuMapper.selectAll();
-        }else {
-            perms=menuMapper.selectPermsByUserID(loginUser.getUser().getId());
+        if (loginUser.getUser().getId() == 1404448588146192411l) {
+            perms = menuMapper.selectAll();
+        } else {
+            perms = menuMapper.selectPermsByUserID(loginUser.getUser().getId());
         }
 
-        List<String> roleList=rolesService.selectRoleBYUserId(loginUser.getUser().getId());
-        SysUserVo sysUserVo=new SysUserVo();
-        BeanUtils.copyProperties(loginUser.getUser(),sysUserVo);
-        AdminInfoVo adminInfoVo=new AdminInfoVo(perms,roleList,sysUserVo);
+        List<String> roleList = rolesService.selectRoleBYUserId(loginUser.getUser().getId());
+        SysUserVo sysUserVo = new SysUserVo();
+        BeanUtils.copyProperties(loginUser.getUser(), sysUserVo);
+        AdminInfoVo adminInfoVo = new AdminInfoVo(perms, roleList, sysUserVo);
         return Result.success(adminInfoVo);
     }
 
     @Override
     public Result getRouters() {
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Menu> menuList=menuMapper.selectAllMenu();
-        List<MenuVo> menuVos=copyList(menuList);
+        List<Menu> menuList = menuMapper.selectAllMenu();
+        List<MenuVo> menuVos = copyList(menuList,true);
         return Result.success(menuVos);
     }
 
-    private List<MenuVo> copyList(List<Menu> menuList) {
-        List<MenuVo> menuVoList=new ArrayList<>();
-        for (Menu menu:menuList){
-            MenuVo menuVo=copy(menu);
+    @Override
+    public Result findMenus() {
+        List<Menu> menuList = menuMapper.selectMenuList();
+        List<MenuVo> menuVoList=copyList(menuList,false);
+        return Result.success(menuVoList);
+    }
+
+    @Override
+    public Result findMenu(Long id) {
+        Menu menu = menuMapper.selectMenuById(id);
+        MenuVo menuVo = copy(menu,false);
+        return Result.success(menuVo);
+    }
+
+    private List<MenuVo> copyList(List<Menu> menuList,boolean isChildren) {
+        List<MenuVo> menuVoList = new ArrayList<>();
+        for (Menu menu : menuList) {
+            MenuVo menuVo = copy(menu,isChildren);
             menuVoList.add(menuVo);
         }
         return menuVoList;
     }
 
-    private MenuVo copy(Menu menu) {
-        MenuVo menuVo=new MenuVo();
-        BeanUtils.copyProperties(menu,menuVo);
-        List<Menu> menuList=menuMapper.selectMenuByParentId(menu.getId());
-        if (menuList!=null&&menuList.size()>0){
-            menuVo.setChildren(menuList);
-        }else {
-            menuVo.setChildren(null);
+    private MenuVo copy(Menu menu,boolean isChildren) {
+        MenuVo menuVo = new MenuVo();
+        BeanUtils.copyProperties(menu, menuVo);
+        if (isChildren){
+            List<Menu> menuList = menuMapper.selectMenuByParentId(menu.getId());
+            if (menuList != null && menuList.size() > 0) {
+                menuVo.setChildren(menuList);
+            } else {
+                menuVo.setChildren(null);
+            }
         }
+
         return menuVo;
     }
 }

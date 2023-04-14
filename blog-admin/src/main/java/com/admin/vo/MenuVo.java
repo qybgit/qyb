@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class MenuVo {
-    private int id;
+    private Long id;
     private String menu_name;
     private String path;
     private String component;
@@ -17,5 +17,7 @@ public class MenuVo {
     private Long create_time;
     private Long update_time;
     private int del_flag;
+    private int order_num;
+    private long parent_id;
     private List<Menu> children;
 }

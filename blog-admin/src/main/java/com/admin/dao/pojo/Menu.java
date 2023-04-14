@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 
 public class Menu {
-    private int id;
+    private long id;
     private String menu_name;
     private String path;
     private String component;
@@ -15,5 +15,6 @@ public class Menu {
     private Long create_time;
     private Long update_time;
     private int del_flag;
-    private int parent_id;
+    private int order_num;
+    private long parent_id;
 }

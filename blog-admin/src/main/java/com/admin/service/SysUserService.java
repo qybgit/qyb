@@ -14,4 +14,8 @@ public interface SysUserService {
     SysUser checkToken(String token);
 
     Result selectAllUser();
+
+    Result delete(Long id);
+
+    Result editUser(SysUserVo sysUserVo);
 }

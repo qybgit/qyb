@@ -17,5 +17,11 @@ public interface MenuMapper {
     List<Menu> selectAllMenu();
 
     @Select("select * from my_menu where parent_id=#{id}")
-    List<Menu> selectMenuByParentId(int id);
+    List<Menu> selectMenuByParentId(Long id);
+
+    @Select("select * from my_menu where id=#{id}")
+    Menu selectMenuById(Long id);
+
+    @Select("select * from my_menu order by order_num DESC")
+    List<Menu> selectMenuList();
 }

@@ -8,7 +8,8 @@ import lombok.ToString;
 public class SysUserVo {
     private long id;
     private String account;
-    private int admin;
+    private String email;
     private String avatar;
     private String nickName;
+    private int deleted;
 }
