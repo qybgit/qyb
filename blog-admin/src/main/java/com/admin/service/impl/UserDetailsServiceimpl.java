@@ -20,9 +20,9 @@ public class UserDetailsServiceimpl implements UserDetailsService {
     MenuMapper menuMapper;
     @Override
     public UserDetails loadUserByUsername(String nickName) throws UsernameNotFoundException {
-        System.out.println(nickName);
+
         SysUser sysUser=sysUserMapper.selectUSerByName(nickName);
-        System.out.println(sysUser);
+
         if (sysUser==null){
                 throw new UsernameNotFoundException("用户不存在");
             }

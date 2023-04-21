@@ -1,11 +1,9 @@
 package com.admin.controller;
 
 import com.admin.service.MenuService;
+import com.admin.vo.params.MenuParam;
 import com.framework.vo.Result;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -23,6 +21,11 @@ public class MenuController {
     public Result getRouters(){
 
         return menuService.getRouters();
+    }
+    @GetMapping("getMenus")
+    public Result getMenus(){
+
+        return menuService.getMenus();
     }
 
     /**
@@ -42,5 +45,15 @@ public class MenuController {
     @GetMapping("menu/{id}")
     public Result menu(@PathVariable("id") Long id){
         return menuService.findMenu(id);
+    }
+
+    /**
+     * 隐藏菜单
+     * @param
+     * @return
+     */
+    @PostMapping("menuEdit")
+    public Result menuEdit(@RequestBody MenuParam menuParam){
+        return menuService.editMenu(menuParam);
     }
 }

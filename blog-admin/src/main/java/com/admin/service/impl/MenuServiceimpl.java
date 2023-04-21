@@ -7,11 +7,13 @@ import com.admin.service.MenuService;
 import com.admin.service.RolesService;
 import com.admin.vo.AdminInfoVo;
 import com.admin.vo.MenuVo;
+import com.admin.vo.params.MenuParam;
 import com.framework.vo.Result;
 import com.framework.vo.SysUserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -42,17 +44,17 @@ public class MenuServiceimpl implements MenuService {
     }
 
     @Override
-    public Result getRouters() {
+    public Result  getRouters() {
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Menu> menuList = menuMapper.selectAllMenu();
-        List<MenuVo> menuVos = copyList(menuList,true);
+        List<MenuVo> menuVos = copyList1(menuList,true);
         return Result.success(menuVos);
     }
 
     @Override
     public Result findMenus() {
         List<Menu> menuList = menuMapper.selectMenuList();
-        List<MenuVo> menuVoList=copyList(menuList,false);
+        List<MenuVo> menuVoList=copyList(menuList,true);
         return Result.success(menuVoList);
     }
 
@@ -61,6 +63,21 @@ public class MenuServiceimpl implements MenuService {
         Menu menu = menuMapper.selectMenuById(id);
         MenuVo menuVo = copy(menu,false);
         return Result.success(menuVo);
+    }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result editMenu(MenuParam menuParam) {
+        menuMapper.editMenu(menuParam.getId(),menuParam.getMenuId());
+        List<Menu> menuList = menuMapper.selectAllFirstMenu();
+        List<MenuVo> menuVos = copyList(menuList,true);
+        return Result.success(menuVos);
+    }
+
+    @Override
+    public Result getMenus() {
+        List<Menu> menuList = menuMapper.selectAllFirstMenu();
+        List<MenuVo> menuVos = copyList(menuList,true);
+        return Result.success(menuVos);
     }
 
     private List<MenuVo> copyList(List<Menu> menuList,boolean isChildren) {
@@ -78,7 +95,32 @@ public class MenuServiceimpl implements MenuService {
         if (isChildren){
             List<Menu> menuList = menuMapper.selectMenuByParentId(menu.getId());
             if (menuList != null && menuList.size() > 0) {
-                menuVo.setChildren(menuList);
+                List<MenuVo> menuVoList=copyList(menuList,true);
+                menuVo.setChildren(menuVoList);
+            } else {
+                menuVo.setChildren(null);
+            }
+        }
+
+        return menuVo;
+    }
+    private List<MenuVo> copyList1(List<Menu> menuList,boolean isChildren) {
+        List<MenuVo> menuVoList = new ArrayList<>();
+        for (Menu menu : menuList) {
+            MenuVo menuVo = copy1(menu,isChildren);
+            menuVoList.add(menuVo);
+        }
+        return menuVoList;
+    }
+
+    private MenuVo copy1(Menu menu,boolean isChildren) {
+        MenuVo menuVo = new MenuVo();
+        BeanUtils.copyProperties(menu, menuVo);
+        if (isChildren){
+            List<Menu> menuList = menuMapper.selectMenuByParentId1(menu.getId());
+            if (menuList != null && menuList.size() > 0) {
+                List<MenuVo> menuVoList=copyList(menuList,true);
+                menuVo.setChildren(menuVoList);
             } else {
                 menuVo.setChildren(null);
             }

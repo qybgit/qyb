@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-//        token = token.substring(7);
+        token = token.substring(7);
         SysUser sysUser;
         sysUser = service.checkToken(token);
         if (sysUser == null) {

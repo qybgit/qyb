@@ -27,7 +27,7 @@ public interface CategoryMapper {
     @Insert("insert into my_category(category_name,createBy_id,del_fag) values(#{category_name},#{createBy_id},#{del_fag})")
     int insertCategory(Category category);
 
-    @Select("select * from my_category where category_name=#{category_name}")
+    @Select("select * from my_category where category_name=#{category_name} and deleted=0")
     Category findByCategoryName(String category_name);
 
 

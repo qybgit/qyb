@@ -1,5 +1,6 @@
 package com.admin.service;
 
+import com.admin.vo.params.MenuParam;
 import com.framework.vo.Result;
 
 public interface MenuService {
@@ -10,4 +11,8 @@ public interface MenuService {
     Result findMenus();
 
     Result findMenu(Long id);
+
+    Result editMenu(MenuParam menuParam);
+
+    Result getMenus();
 }

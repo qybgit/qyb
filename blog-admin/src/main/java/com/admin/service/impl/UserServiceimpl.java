@@ -8,7 +8,7 @@ import com.admin.util.JwtUtil;
 import com.alibaba.fastjson2.JSON;
 import com.framework.vo.Result;
 import com.framework.vo.TokenVo;
-import com.framework.vo.params.Account;
+import com.admin.vo.params.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,11 +37,10 @@ public class UserServiceimpl implements UserService {
                 return Result.fail(500, "用户名或密码错误", null);
             }
             LoginUser user = (LoginUser) authentication.getPrincipal();
-            System.out.println(user);
             String token = JwtUtil.createToken(user.getUser().getId());
             TokenVo token1 = new TokenVo(user.getUser().getNickName(), token);
             redisTemplate.opsForValue().set(token, JSON.toJSONString(user.getUser()));
-            redisTemplate.expire(token, 60 * 60 * 8, TimeUnit.SECONDS);
+            redisTemplate.expire(token, 60 * 60 * 24, TimeUnit.SECONDS);
 
             return Result.success(token1);
         } catch (Exception e) {

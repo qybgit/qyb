@@ -1,7 +1,7 @@
 package com.admin.controller;
 import com.admin.service.UserService;
 import com.framework.vo.Result;
-import com.framework.vo.params.Account;
+import com.admin.vo.params.Account;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

@@ -7,6 +7,7 @@ import lombok.Data;
 public class Menu {
     private long id;
     private String menu_name;
+    private String icon;
     private String path;
     private String component;
     private int  vision;

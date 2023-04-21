@@ -29,7 +29,7 @@ public interface TagMapper {
     @Select("select count(*) from my_tag")
     int findTagCount();
 
-    @Select("select * from my_tag where tag_name=#{nickName}")
+    @Select("select * from my_tag where tag_name=#{nickName} and deleted=0 ")
     Tag selectByTagName(String nickname);
 
     @Update("update my_tag set del_fag=1 where id=#{id}")

@@ -39,12 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     AccessDeniedHandler accessDeniedHandler;
     @Resource
     JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public BCryptPasswordEncoder getPassword() {
-        return new BCryptPasswordEncoder();
-    }
-
+    @Resource
+    BCryptPasswordEncoder bCryptPasswordEncoder;
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -53,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(getPassword());
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
 

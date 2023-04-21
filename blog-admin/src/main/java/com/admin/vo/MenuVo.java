@@ -9,6 +9,7 @@ import java.util.List;
 public class MenuVo {
     private Long id;
     private String menu_name;
+    private String icon;
     private String path;
     private String component;
     private int  vision;
@@ -19,5 +20,5 @@ public class MenuVo {
     private int del_flag;
     private int order_num;
     private long parent_id;
-    private List<Menu> children;
+    private List<MenuVo> children;
 }

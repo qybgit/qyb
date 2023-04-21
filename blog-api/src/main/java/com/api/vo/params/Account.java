@@ -7,4 +7,5 @@ public class Account {
     private String nickName;
 //    private String avatar;
     private String password;
+    private String email;
 }
