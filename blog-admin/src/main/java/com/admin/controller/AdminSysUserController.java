@@ -1,6 +1,7 @@
 package com.admin.controller;
 
 import com.admin.service.SysUserService;
+import com.admin.vo.params.SysDeleteParam;
 import com.framework.vo.Result;
 import com.framework.vo.SysUserVo;
 import com.admin.vo.params.Account;
@@ -29,9 +30,18 @@ public class AdminSysUserController {
      * @param id
      * @return
      */
-    @PostMapping("delete/{id}")
-    public Result delete(@PathVariable("id") Long id){
-        return sysUserService.delete(id);
+    @PostMapping("deleted/{id}")
+    public Result deleted(@PathVariable("id") Long id){
+        return sysUserService.deleted(id);
+    }
+    /**
+     * 隐藏用户
+     * @param
+     * @return
+     */
+    @PostMapping("delete")
+    public Result delete(@RequestBody SysDeleteParam sysDeleteParam){
+        return sysUserService.delete(sysDeleteParam);
     }
 
     /**

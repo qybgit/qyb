@@ -1,10 +1,14 @@
 package com.admin.service.impl;
 
+import com.admin.dao.mapper.RoleMapper;
 import com.admin.dao.mapper.SysUserMapper;
 import com.admin.dao.pojo.Role;
 import com.admin.dao.pojo.SysUser;
 import com.admin.service.SysUserService;
 import com.admin.util.JwtUtil;
+import com.admin.vo.RoleVo;
+import com.admin.vo.SysUserVoAdmin;
+import com.admin.vo.params.SysDeleteParam;
 import com.alibaba.fastjson2.JSON;
 
 import com.framework.vo.Result;
@@ -32,11 +36,12 @@ public class SysUserServiceimpl implements SysUserService {
     RedisTemplate<String, String> redisTemplate;
     @Resource
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Resource
+    RoleMapper roleMapper;
 
     @Override
     public SysUserVo selectUserById(long to_uid) {
         SysUser sysUser = sysUserMapper.selectUserById(to_uid);
-
         return copyUser(sysUser);
     }
 
@@ -55,23 +60,38 @@ public class SysUserServiceimpl implements SysUserService {
 
     @Override
     public Result selectAllUser() {
-        List<SysUser> commentList = sysUserMapper.selectAllUser();
-        List<SysUserVo> sysUserVoList = new ArrayList<>();
-        for (SysUser sysUser : commentList) {
-            SysUserVo sysUserVo = copyUser(sysUser);
+        List<SysUser> sysUserList = sysUserMapper.selectAllUser();
+        List<SysUserVoAdmin> sysUserVoList = new ArrayList<>();
+        for (SysUser sysUser : sysUserList) {
+            SysUserVoAdmin sysUserVo = copyUserAdmin(sysUser);
             sysUserVoList.add(sysUserVo);
         }
         return Result.success(sysUserVoList);
     }
 
+    private SysUserVoAdmin copyUserAdmin(SysUser sysUser) {
+        SysUserVoAdmin sysUserVo = new SysUserVoAdmin();
+        BeanUtils.copyProperties(sysUser, sysUserVo);
+        Role role=roleMapper.selectRoleByAuthor_id(sysUser.getId());
+        if(role!=null){
+            RoleVo roleVo=new RoleVo(role.getId(),role.getName(),role.getRole_key());
+            sysUserVo.setRoleVo(roleVo);
+        }else {
+            sysUserVo.setRoleVo(null);
+        }
+
+
+        return sysUserVo;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Result delete(Long id) {
+    public Result deleted(Long id) {
         SysUser sysUser = sysUserMapper.selectUserById(id);
         if (sysUser.getDeleted() == 1) {
             return Result.fail(400, "该用户已被删除", null);
         }
-        if (!deleteUser(id)) {
+        if (!deletedUser(id)) {
             return Result.fail(400, "删除失败", null);
         }
         return Result.success("删除成功");
@@ -84,8 +104,12 @@ public class SysUserServiceimpl implements SysUserService {
             return Result.fail(400,"请填写修改内容",null);
         }
         SysUser sysUser=sysUserMapper.selectUserById(sysUserVo.getId());
+        SysUser sysUser1=sysUserMapper.selectUSerByName(sysUserVo.getNickName());//更改获取的用户名重复问题
         if (sysUser.getDeleted()==1){
-            return Result.fail(400,"该用户已被删除",null);
+            return Result.fail(400,"该用户已被停用",null);
+        }
+        if (sysUser1!=null&&sysUser1.getId()!=sysUserVo.getId()){
+            return Result.fail(400,"该用户名重复",null);
         }
         if (!edit(sysUserVo)){
             return Result.fail(400,"修改失败",null);
@@ -95,12 +119,12 @@ public class SysUserServiceimpl implements SysUserService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Result addUser(Account account) {
-        if (StringUtils.isBlank(account.getNickName()) && StringUtils.isBlank(account.getPassword())) {
+        if (StringUtils.isBlank(account.getNickName()) && StringUtils.isBlank(account.getPassword())&&StringUtils.isBlank(account.getEmail())) {
             return Result.fail(400, "请填写信息 ", null);
         }
-        if (account.getRole()==null) {
-            return Result.fail(400, "请填写角色 ", null);
-        }
+//        if (account.getRole()==null) {
+//            return Result.fail(400, "请填写角色 ", null);
+//        }
         SysUser sysUser1=sysUserMapper.selectUSerByName(account.getNickName());
         if(sysUser1!=null){
             return Result.fail(400,"账户名已存在",null);
@@ -123,11 +147,21 @@ public class SysUserServiceimpl implements SysUserService {
         }
         return Result.fail(400,"添加失败",null);
     }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result delete(SysDeleteParam sysDeleteParam) {
+        sysUserMapper.updateUserState(sysDeleteParam.getDel_flag(),sysDeleteParam.getId());
+        return Result.success("success");
+    }
 
     private boolean insertUser(SysUser sysUser, Role role) {
         try {
             sysUserMapper.insertUser(sysUser);
-            sysUserMapper.insertRoleWithUser(sysUser.getId(),role.getId());
+            if (role.getId()!=null)
+            {
+                sysUserMapper.insertRoleWithUser(sysUser.getId(),role.getId());
+            }
+
         }catch (Exception e){
             throw e;
         }
@@ -136,6 +170,15 @@ public class SysUserServiceimpl implements SysUserService {
 
     private boolean edit(SysUserVo sysUserVo) {
         try {
+            if(null != sysUserVo.getRoleId()){
+                Role role=roleMapper.selectRoleByAuthor_id(sysUserVo.getId());
+                if (role!=null){
+                    roleMapper.updateRoleIdByAuthorId(sysUserVo.getRoleId(),sysUserVo.getId());
+                }else {
+                    roleMapper.insertRoleIdByAuthorId(sysUserVo.getRoleId(),sysUserVo.getId());
+                }
+
+            }
             sysUserMapper.updateUser(sysUserVo);
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -143,7 +186,7 @@ public class SysUserServiceimpl implements SysUserService {
         return  true;
     }
 
-    private boolean deleteUser(Long id) {
+    private boolean deletedUser(Long id) {
         try {
             sysUserMapper.deleteUser(id);
             sysUserMapper.deleteUserWithRole(id);

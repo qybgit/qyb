@@ -10,7 +10,7 @@ import java.util.List;
 public class PermissionService {
     public boolean hasPermission(String permission) {
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (loginUser.getUser().getId() == 1404448588146192411l) {
+        if (loginUser.getUser().getId() == 10000l) {
             return true;
         }
         List<String> permissions=loginUser.getPermission();

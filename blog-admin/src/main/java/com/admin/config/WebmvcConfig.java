@@ -15,7 +15,8 @@ public class WebmvcConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns("*")
                 .allowedOrigins("*")
                 .allowedMethods("*")
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Headers", "Access-Control-Allow-Credentials");
         //允许跨域请求的域名
 //        registry.addMapping("/**")
 //                .allowedOrigins("*")

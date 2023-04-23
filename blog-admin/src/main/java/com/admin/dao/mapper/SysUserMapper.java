@@ -33,6 +33,9 @@ public interface SysUserMapper {
     @Insert("insert into my_sys_role(author_id,role_id) values(#{author_id},#{role_id})")
     void insertRoleWithUser(@Param("author_id") long author_id, @Param("role_id") int role_id);
 
-    @Update("update my_sys_role set del_fag=1 where author_id=#{id}")
+    @Update("update my_sys_role set del_flag=1 where author_id=#{id}")
     void deleteUserWithRole(Long id);
+
+    @Update("update my_sys_user set deleted=#{del_flag} where id=#{id}")
+    void updateUserState(@Param("del_flag") int del_flag, @Param("id") long id);
 }

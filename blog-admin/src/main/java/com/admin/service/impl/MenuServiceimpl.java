@@ -30,7 +30,7 @@ public class MenuServiceimpl implements MenuService {
     public Result getInfo() {
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<String> perms;
-        if (loginUser.getUser().getId() == 1404448588146192411l) {
+        if (loginUser.getUser().getId() == 10000l) {
             perms = menuMapper.selectAll();
         } else {
             perms = menuMapper.selectPermsByUserID(loginUser.getUser().getId());

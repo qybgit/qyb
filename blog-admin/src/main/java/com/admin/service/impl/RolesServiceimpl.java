@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -61,26 +62,84 @@ public class RolesServiceimpl implements RolesService {
 
     @Override
     public Result findRoleById(Integer id) {
-        List<RoleVo> roleVoList;
-        if (id==1){
-             roleVoList=roleMapper.selectAllRole();
-        }else {
-            roleVoList=roleMapper.selectRoleById(id);
-        }
-        return Result.success(roleVoList);
+        Role role=roleMapper.selectRoleById(id);
+        List<Menu> menusId=menuMapper.selectMenuByRoleId(id);
+        role.setMenuList(menusId);;
+//        List<RoleVo> roleVoList;
+//        if (id==1){
+//             roleVoList=roleMapper.selectAllRole();
+//        }else {
+//            List<Integer> menusId=menuMapper.selectMenu_id(id);
+//            if (menusId==null){
+//                roleVoList=new ArrayList<>();
+//                Role role=roleMapper.selectRoleById(id);
+//                RoleVo roleVo=new RoleVo();
+//                roleVo.setId(role.getId());
+//                roleVo.setRole_key(role.getRole_key());
+//                roleVo.setName(role.getName());
+//                roleVo.setMenu_id(0);
+//                roleVoList.add(roleVo);
+//            }else {
+//                roleVoList=roleMapper.selectRoleVoById(id);
+//            }
+//
+//        }
+        return Result.success(role);
     }
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Result editRoles(RolesParam rolesParam) {
-        System.out.println(rolesParam);
-        return null;
+        if (rolesParam.getId()==1){
+
+            return  Result.fail(400, "超级权限不可修改", null);
+        }
+        if (StringUtils.isBlank(rolesParam.getRoleName())||StringUtils.isBlank(rolesParam.getRole_key())){
+            return  Result.fail(400, "请填写信息", null);
+        }
+//        Role role=roleMapper.selectRoleByName(rolesParam.getRoleName());
+//        if (role!=null){
+//            return  Result.fail(400, "角色名重复", null);
+//        }
+        if(!updateRole(rolesParam)){
+            return  Result.fail(400, "修改失败", null);
+        }
+        return Result.success("修改成功");
+    }
+
+    private boolean updateRole(RolesParam rolesParam) {
+        Role role=new Role();
+        role.setId(rolesParam.getId());
+        role.setRole_key(rolesParam.getRole_key());
+        role.setName(rolesParam.getRoleName());
+        try{
+            roleMapper.updateRole(role);
+            List<Integer> oldMenusList=menuMapper.selectMenu_id(role.getId());
+            List<Integer> newMenusList=rolesParam.getMenusId();
+            for (Integer id:oldMenusList){
+                if (!newMenusList.contains(id)){
+                    menuMapper.deleteMenuId(role.getId(),id);
+                }
+            }
+            for (Integer id:newMenusList){
+                if (!oldMenusList.contains(id)){
+                    menuMapper.insertMenuId(role.getId(),id);
+                }
+            }
+        }catch (Exception e){
+            throw e;
+        }
+
+        return true;
     }
 
     private boolean insertRole(RolesParam rolesParam) {
         try {
+            rolesParam.getRole().setCreate_time(System.currentTimeMillis());
             roleMapper.insertRole(rolesParam.getRole());
-            for (Integer id:rolesParam.getMenusId()){
-                roleMapper.insertRoleWithMenu(rolesParam.getRole().getId(),id);
+            if(rolesParam.getMenusId()!=null&&rolesParam.getMenusId().size()>0) {
+                for (Integer id : rolesParam.getMenusId()) {
+                    roleMapper.insertRoleWithMenu(rolesParam.getRole().getId(), id);
+                }
             }
         }catch (Exception e){
             throw new RuntimeException(e);

@@ -15,16 +15,16 @@ public interface CategoryMapper {
     @Select("select * from my_category where id=#{category_id}")
     Category findById(int category_id);
 
-    @Select("select * from my_article where category_id=#{id} and del_fag=0 ORDER BY createDate DESC")
+    @Select("select * from my_article where category_id=#{id} and del_flag=0 ORDER BY createDate DESC")
     List<Article> selectArticle(int id);
 
     @Select("select category_name,createBy_id, category_id as id,count(*)as count from my_category JOIN my_article on my_category.id=my_article.category_id GROUP BY my_category.id")
 
     List<Category> selectAll();
 
-    @Update("update my_category set del_fag=1 where id=#{id}")
+    @Update("update my_category set del_flag=1 where id=#{id}")
     int updateCategory(Integer id);
-    @Insert("insert into my_category(category_name,createBy_id,del_fag) values(#{category_name},#{createBy_id},#{del_fag})")
+    @Insert("insert into my_category(category_name,createBy_id,del_flag) values(#{category_name},#{createBy_id},#{del_flag})")
     int insertCategory(Category category);
 
     @Select("select * from my_category where category_name=#{category_name} and deleted=0")

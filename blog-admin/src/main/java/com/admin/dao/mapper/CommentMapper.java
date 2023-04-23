@@ -18,15 +18,15 @@ public interface CommentMapper {
     @Options(useGeneratedKeys = true,keyProperty ="id" )
     Long insertComment(Comment comment);
 
-    @Select("select * from my_comment order by del_fag DESC")
+    @Select("select * from my_comment order by del_flag DESC")
     List<Comment> findComment();
 
     @Select("select title from my_article where id=#{article_id}")
     String findArticleNamById(long article_id);
 
-    @Select("select * from my_comment where id=#{id} and del_fag=1")
+    @Select("select * from my_comment where id=#{id} and del_flag=1")
     Comment findCommentById(Integer id);
 
-    @Update("update my_comment set del_fag=1 where id=#{id}")
+    @Update("update my_comment set del_flag=1 where id=#{id}")
     void deleteComment(Integer id);
 }

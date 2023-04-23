@@ -20,7 +20,7 @@ public interface TagMapper {
     @Select("select article_id from my_tag_article where Tag_id=#{id}" )
     List<Long> selectAListId(Integer id);
 
-    @Insert("insert into my_tag(tag_name,createBy_id,del_fag) values(#{tag_Name},#{createBy_id},#{del_fag})")
+    @Insert("insert into my_tag(tag_name,createBy_id,del_flag) values(#{tag_Name},#{createBy_id},#{del_flag})")
     void insertTag(Tag tag);
 
     @Select("select count(*) from my_tag_article where tag_id=#{id}")
@@ -32,7 +32,7 @@ public interface TagMapper {
     @Select("select * from my_tag where tag_name=#{nickName} and deleted=0 ")
     Tag selectByTagName(String nickname);
 
-    @Update("update my_tag set del_fag=1 where id=#{id}")
+    @Update("update my_tag set del_flag=1 where id=#{id}")
     int updateTag(Integer id);
 
     @Select("select * from my_tag where id=#{id}")

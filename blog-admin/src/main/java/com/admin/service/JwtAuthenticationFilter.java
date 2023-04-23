@@ -25,6 +25,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     MenuMapper menuMapper;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        //设置在验证登陆失败响应头
+//        response.setHeader("Access-Control-Allow-Origin", "*");
+//        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+//        response.setHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
+//        response.setHeader("Access-Control-Allow-Credentials", "true");
         String token = request.getHeader("authorization");
         if (StringUtils.isBlank(token)) {
             filterChain.doFilter(request, response);

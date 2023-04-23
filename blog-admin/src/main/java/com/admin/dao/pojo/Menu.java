@@ -18,4 +18,5 @@ public class Menu {
     private int del_flag;
     private int order_num;
     private long parent_id;
+    private int grade;
 }

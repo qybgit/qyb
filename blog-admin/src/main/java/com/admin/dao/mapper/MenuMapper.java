@@ -1,10 +1,7 @@
 package com.admin.dao.mapper;
 
 import com.admin.dao.pojo.Menu;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -35,6 +32,14 @@ public interface MenuMapper {
     void editMenu(@Param("id") Long id,@Param("menuId") Long menuId);
 
     //通过角色id查找其menu权限
-    @Select("SELECT menu_name,my_menu.id from my_role mr LEFT JOIN my_role_menu rm on mr.id=rm.role_id LEFT JOIN my_menu on my_menu.id=rm.menu_id where mr.id=#{id}")
+    @Select("SELECT grade,menu_name,my_menu.id from my_role mr LEFT JOIN my_role_menu rm on mr.id=rm.role_id LEFT JOIN my_menu on my_menu.id=rm.menu_id where mr.id=#{id} and rm.del_flag=0")
     List<Menu> selectMenuByRoleId(int id);
+
+    @Select("select menu_id from my_role_menu where role_id=#{id} and del_flag=0")
+    List<Integer> selectMenu_id(int id);
+
+    @Update("update my_role_menu set del_flag=1 where role_id=#{role_id} and menu_id=#{menu_id} and del_flag=0")
+    void deleteMenuId(@Param("role_id") Integer role_id, @Param("menu_id") Integer menu_id);
+    @Insert("insert into my_role_menu(role_id,menu_id) values(#{role_id},#{menu_id}) ")
+    void insertMenuId(@Param("role_id")Integer role_id, @Param("menu_id")Integer menu_id);
 }

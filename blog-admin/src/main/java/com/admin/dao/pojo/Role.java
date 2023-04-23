@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class Role {
-    private int id;
+    private Integer id;
     private String name;
     private String role_key;
     private long create_time;

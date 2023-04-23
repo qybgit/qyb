@@ -22,6 +22,11 @@ public class MenuController {
 
         return menuService.getRouters();
     }
+
+    /**
+     * 获取所有menu包括删除的
+     * @return
+     */
     @GetMapping("getMenus")
     public Result getMenus(){
 
