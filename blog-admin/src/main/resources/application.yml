@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
   datasource:
     url: jdbc:mysql://localhost:3306/myblog?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
@@ -11,3 +15,6 @@ spring:
     port: 6379
 server:
   port: 8082
+access_key: NrHZVM-YkG_MiCDi8rF6GYMMbIzSadxgcUcuvnIL
+secret_key: W9-G3JtIzzmcd6WIXE-rMguTk5GJ_tnVMBV_5Wnk
+bucket: blog-images-admin

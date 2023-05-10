@@ -36,7 +36,7 @@ public interface ArticleMapper {
     @Select("SELECT COUNT(*) from my_article")
     int articleCount();
 
-    @Select("select * from my_article")
+    @Select("select * from my_article order by createDate DESC")
     List<Article> alls();
 
     @Select("select my_article.id as id,title,createDate,updateDate,summary ,category_id from my_tag_article JOIN my_article ON my_article.id=my_tag_article.article_id where tag_id=#{id}")

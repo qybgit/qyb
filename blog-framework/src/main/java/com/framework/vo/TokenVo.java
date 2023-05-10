@@ -8,4 +8,5 @@ import lombok.Data;
 public class TokenVo {
     private String account;
     private String token;
+    private String RoleName;
 }

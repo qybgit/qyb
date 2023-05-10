@@ -1,6 +1,7 @@
 package com.admin.service.impl;
 
 import com.admin.dao.pojo.LoginUser;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,11 @@ public class PermissionService {
         }
         List<String> permissions=loginUser.getPermission();
         if (permissions==null||permissions.size()<1){
-            return false;
+            throw  new AccessDeniedException("权限不足");
         }
-        return permissions.contains(permission);
+        if(!permissions.contains(permission)){
+            throw  new AccessDeniedException("权限不足");
+        }
+        return true;
     }
 }

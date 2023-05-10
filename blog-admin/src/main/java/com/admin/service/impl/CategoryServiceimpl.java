@@ -56,7 +56,7 @@ public class CategoryServiceimpl implements CategoryService {
     @Override
     public Result delCategory(Integer id) {
         Category category=categoryMapper.findById(id);
-        if (category.getDel_fag()==1){
+        if (category.getDel_flag()==1){
             return Result.fail(400,"此分类已删除",null);
         }
         if (!deleteCategory(id))
@@ -103,6 +103,7 @@ public class CategoryServiceimpl implements CategoryService {
     @Transactional(rollbackFor = Exception.class)
     public boolean updateTag(Category category) {
         try{
+            System.out.println(category);
             categoryMapper.updateTagByName(category);
         }catch (Exception e){
             throw e;
@@ -113,7 +114,8 @@ public class CategoryServiceimpl implements CategoryService {
     private boolean addCate(Category category) {
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         category.setCreateBy_id(loginUser.getUser().getId());
-        category.setDel_fag(0);
+        category.setDel_flag(0);
+        category.setCreate_date(System.currentTimeMillis());
         try {
             categoryMapper.insertCategory(category);
         }catch (Exception e){

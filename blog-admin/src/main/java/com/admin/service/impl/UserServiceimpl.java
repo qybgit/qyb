@@ -29,9 +29,10 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public Result login(Account account) {
-
+        System.out.println(account);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(account.getNickName(), account.getPassword());
         try {
+            System.out.println(authenticationToken);
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             if (authentication == null) {
                 return Result.fail(500, "用户名或密码错误", null);
@@ -44,7 +45,7 @@ public class UserServiceimpl implements UserService {
 
             return Result.success(token1);
         } catch (Exception e) {
-            return Result.fail(400, "redis error", null);
+            return Result.fail(400, "用户名或密码错误", null);
         }
 
     }

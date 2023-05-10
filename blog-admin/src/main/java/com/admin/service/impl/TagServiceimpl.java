@@ -48,7 +48,12 @@ public class TagServiceimpl implements TagService {
         tag.setCount(count);
         BeanUtils.copyProperties(tag,tagVo);
         SysUserVo sysUserVo=sysUserService.selectUserById(tag.getCreateBy_id());
-        tagVo.setSysUserVo(sysUserVo);
+
+        if (sysUserVo != null) {
+            tagVo.setSysUserVo(sysUserVo);
+        } else {
+            tagVo.setSysUserVo(null);
+        }
         return tagVo;
     }
 
@@ -103,7 +108,7 @@ public class TagServiceimpl implements TagService {
     @Override
     public Result delTag(Integer id) {
         Tag tag=tagMapper.selectById(id);
-        if (tag.getDel_fag()==1){
+        if (tag.getDel_flag()==1){
             return Result.fail(400,"该标签已删除",null);
         }
         if (!deleteTag(id))
@@ -154,7 +159,8 @@ public class TagServiceimpl implements TagService {
         Tag tag=new Tag();
         tag.setTag_Name(nickname);
         tag.setCreateBy_id(loginUser.getUser().getId());
-        tag.setDel_fag(0);
+        tag.setDel_flag(0);
+        tag.setCreate_date(System.currentTimeMillis());
 
         try {
             tagMapper.insertTag(tag);

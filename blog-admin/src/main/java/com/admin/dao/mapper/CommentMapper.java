@@ -18,7 +18,7 @@ public interface CommentMapper {
     @Options(useGeneratedKeys = true,keyProperty ="id" )
     Long insertComment(Comment comment);
 
-    @Select("select * from my_comment order by del_flag DESC")
+    @Select("select * from my_comment order by del_flag ASC")
     List<Comment> findComment();
 
     @Select("select title from my_article where id=#{article_id}")
@@ -29,4 +29,7 @@ public interface CommentMapper {
 
     @Update("update my_comment set del_flag=1 where id=#{id}")
     void deleteComment(Integer id);
+
+    @Select("select * from my_comment where content like concat('%',#{text},'%') order by del_flag ASC")
+    List<Comment> searchText(String text);
 }

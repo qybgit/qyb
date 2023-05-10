@@ -11,4 +11,5 @@ public class CommentAdminVo {
     private int level;
     private SysUserVo toUser;
     private String articleName;
+    private int del_flag;
 }

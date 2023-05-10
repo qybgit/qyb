@@ -63,4 +63,13 @@ public class AdminSysUserController {
     public Result addUser(@RequestBody Account account){
         return sysUserService.addUser(account);
     }
+
+    /**
+     * 前后用户数
+     * @return
+     */
+    @GetMapping("count")
+    public Result count(){
+        return sysUserService.count();
+    }
 }

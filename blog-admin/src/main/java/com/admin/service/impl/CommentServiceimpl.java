@@ -5,11 +5,13 @@ import com.admin.dao.mapper.CommentMapper;
 import com.admin.service.CommentService;
 import com.admin.service.SysUserService;
 import com.admin.vo.CommentAdminVo;
+import com.admin.vo.params.Search;
 import com.framework.dao.pojo.Comment;
 import com.framework.vo.CommentVo;
 import com.framework.vo.Result;
 import com.framework.vo.SysUserVo;
 import com.framework.vo.params.CommentParam;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -80,6 +82,17 @@ public class CommentServiceimpl implements CommentService {
             return Result.fail(400,"删除失败",null);
         }
         return Result.success("删除成功");
+
+    }
+
+    @Override
+    public Result search(Search text) {
+        if (StringUtils.isBlank(text.getText())){
+            return Result.fail(400,"请输入",null);
+        }
+        List<Comment> commentList=commentMapper.searchText(text.getText());
+        List<CommentAdminVo> commentAdminVoList=copyAdminCommentList(commentList);
+        return Result.success(commentAdminVoList);
 
     }
 

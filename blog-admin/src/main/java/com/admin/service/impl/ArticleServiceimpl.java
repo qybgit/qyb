@@ -120,11 +120,13 @@ public class ArticleServiceimpl implements ArticleService {
      * @param
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Result addArticle(ArticleParam articleParam) {
         if (!publishArticle(articleParam)) {
             return Result.fail(400, "发布失败", null);
         }
+
         return Result.success("发布成功");
 
     }
@@ -132,6 +134,7 @@ public class ArticleServiceimpl implements ArticleService {
     private boolean publishArticle(ArticleParam articleParam) {
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SysUser sysUser = loginUser.getUser();
+        System.out.println(articleParam);
         Article article = new Article();
         BeanUtils.copyProperties(articleParam, article);
         article.setCreateDate(System.currentTimeMillis());
@@ -268,10 +271,13 @@ public class ArticleServiceimpl implements ArticleService {
             articleMapper.insertBody(articleBody);
             articleMapper.update(articleBody.getId(), article.getId());
             List<Tag> tagList = articleParam.getTags();
-
-            for (Tag tag : tagList) {
-                articleMapper.insertArticleWithTag(tag.getId(), article.getId());
+            if (tagList!=null) {
+                for (Tag tag : tagList) {
+                    articleMapper.insertArticleWithTag(tag.getId(), article.getId());
+                }
             }
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

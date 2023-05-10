@@ -13,4 +13,5 @@ public class Comment {
     private long parent_id;
     private long to_uid;
     private int level;
+    private int del_flag;
 }

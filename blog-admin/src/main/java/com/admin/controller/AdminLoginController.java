@@ -11,7 +11,9 @@ import javax.annotation.Resource;
 public class AdminLoginController {
     @Resource
     UserService userService;
-    @GetMapping("login")
+
+
+    @PostMapping ("login")
     public Result login(@RequestBody Account account){
         return userService.login(account);
     }

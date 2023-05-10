@@ -29,7 +29,7 @@ public interface ArticleMapper {
     Long insertArticle(Article article);
 
 
-    @Insert("insert into my_article_body(article_id,content,content_html) values(#{article_id},#{content},#{content_html})")
+    @Insert("insert into my_article_body(article_id,content) values(#{article_id},#{content})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     Integer insertBody(ArticleBody articleBody);
 

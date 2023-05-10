@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("admin/tag")
+
 public class AdminTagController {
     @Resource
     TagService tagService;
@@ -19,14 +20,15 @@ public class AdminTagController {
     /**
      * all tag
      */
-    @RequestMapping("all")
+    @GetMapping("all")
+
     public Result allTag(){
         return tagService.selectAll();
     }
     /**
      * 根据标签查文章
      */
-    @RequestMapping("{id}")
+    @GetMapping("{id}")
     public Result tagById(@PathVariable("id")Integer id) {
         return articleService.selectArticleByTagId(id);
     }

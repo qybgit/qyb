@@ -16,9 +16,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         Result result = new Result(403, "请登录", null);
         response.setHeader("Access-Control-Allow-Origin", "*");
-//        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-//        response.setHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
-//        response.setHeader("Access-Control-Allow-Credentials", "true");
+
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().print(JSON.toJSON(result));
     }

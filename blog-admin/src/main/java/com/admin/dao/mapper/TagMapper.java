@@ -11,7 +11,7 @@ import java.util.List;
 
 @Mapper
 public interface TagMapper {
-    @Select("select * from my_tag")
+    @Select("select * from my_tag order by del_flag ASC,create_date  ")
     List<Tag> selectAll();
 
     @Select("SELECT my_tag.id,my_tag.tag_name from my_article JOIN my_tag_article ON my_article.id=my_tag_article.article_id JOIN my_tag ON my_tag_article.tag_id=my_tag.id where my_article.id=#{id}")
@@ -20,7 +20,7 @@ public interface TagMapper {
     @Select("select article_id from my_tag_article where Tag_id=#{id}" )
     List<Long> selectAListId(Integer id);
 
-    @Insert("insert into my_tag(tag_name,createBy_id,del_flag) values(#{tag_Name},#{createBy_id},#{del_flag})")
+    @Insert("insert into my_tag(tag_name,createBy_id,del_flag,create_date) values(#{tag_Name},#{createBy_id},#{del_flag},#{create_date})")
     void insertTag(Tag tag);
 
     @Select("select count(*) from my_tag_article where tag_id=#{id}")
@@ -29,7 +29,7 @@ public interface TagMapper {
     @Select("select count(*) from my_tag")
     int findTagCount();
 
-    @Select("select * from my_tag where tag_name=#{nickName} and deleted=0 ")
+    @Select("select * from my_tag where tag_name=#{nickName} and del_flag=0 ")
     Tag selectByTagName(String nickname);
 
     @Update("update my_tag set del_flag=1 where id=#{id}")

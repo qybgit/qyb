@@ -154,6 +154,12 @@ public class SysUserServiceimpl implements SysUserService {
         return Result.success("success");
     }
 
+    @Override
+    public Result count() {
+        int count=sysUserMapper.selectAllUserDeleted();
+        return Result.success(count);
+    }
+
     private boolean insertUser(SysUser sysUser, Role role) {
         try {
             sysUserMapper.insertUser(sysUser);

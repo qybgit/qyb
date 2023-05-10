@@ -23,6 +23,8 @@ public interface SysUserMapper {
 
     @Select("select * from my_sys_user")
     List<SysUser> selectAllUser();
+    @Select("select count(*) as count from my_sys_user where deleted=0")
+    int selectAllUserDeleted();
 
     @Update("update my_sys_user set deleted=1 where id=#{id}")
     void deleteUser(Long id);

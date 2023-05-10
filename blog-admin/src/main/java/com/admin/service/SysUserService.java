@@ -24,4 +24,6 @@ public interface SysUserService {
     Result addUser(Account account);
 
     Result delete(SysDeleteParam sysDeleteParam);
+
+    Result count();
 }

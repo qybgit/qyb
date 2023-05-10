@@ -13,7 +13,7 @@ public class ArticleParam {
 
     private ArticleBodyParam body;
 
-    private int category_id;
+    private Integer category_id;
 
     private String summary;
 
