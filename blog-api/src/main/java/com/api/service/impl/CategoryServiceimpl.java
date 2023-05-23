@@ -22,6 +22,11 @@ public class CategoryServiceimpl implements CategoryService {
     @Override
     public Category findById(int category_id) {
         Category category=categoryMapper.findById(category_id);
+        if(category==null){
+            Category category1=new Category();
+            category1.setCategory_name("此分类已删除");
+            return category1;
+        }
         return category;
     }
 

@@ -15,4 +15,6 @@ public interface CategoryService {
     Result addCategory(Category category);
 
     Result revise(Category category);
+
+    Result findAlls();
 }

@@ -6,13 +6,11 @@ import com.admin.dao.pojo.LoginUser;
 import com.admin.dao.pojo.SysUser;
 import com.admin.service.ArticleService;
 import com.admin.service.CommentService;
+import com.admin.service.SysUserService;
 import com.framework.dao.pojo.*;
 
 
-import com.framework.vo.ArticleBodyVo;
-import com.framework.vo.ArticleVo;
-import com.framework.vo.CommentVo;
-import com.framework.vo.Result;
+import com.framework.vo.*;
 import com.framework.vo.params.ArticleBodyParam;
 import com.framework.vo.params.ArticleParam;
 import com.framework.vo.params.PageParams;
@@ -40,6 +38,8 @@ public class ArticleServiceimpl implements ArticleService {
     CommentService commentService;
     @Resource
     TagServiceimpl tagService;
+    @Resource
+    SysUserService sysUserService;
 
     /**
      * 所有文章
@@ -140,7 +140,7 @@ public class ArticleServiceimpl implements ArticleService {
         article.setCreateDate(System.currentTimeMillis());
         article.setUpdateDate(System.currentTimeMillis());
         article.setAuthor_id(sysUser.getId());
-        article.setDel_fag(0);
+        article.setDel_flag(0);
         if (!publish(article, articleParam)) {
             return false;
         }
@@ -180,27 +180,50 @@ public class ArticleServiceimpl implements ArticleService {
         BeanUtils.copyProperties(articleVo, article);
         article.setUpdateDate(System.currentTimeMillis());
         article.setCategory_id(articleVo.getCategory().getId());
-        try{
+        Integer bodyId=articleMapper.selectBodyIdByArticleId(articleVo.getId());
+        articleVo.getArticleBodyVo().setId(bodyId);
+        try {
             articleMapper.updateArticle(article);
             articleMapper.updateArticleBody(articleVo.getArticleBodyVo());
-            List<Tag> odlTagList=tagService.selectByArticleId(articleVo.getId());
-            List<Tag> newTagList=articleVo.getTags();
-            for (Tag tag:odlTagList){
-                if (!newTagList.contains(tag)){
+            List<Tag> odlTagList = tagService.selectByArticleId(articleVo.getId());
+            List<Tag> newTagList = articleVo.getTags();
+            for (Tag tag : odlTagList) {
+                if (!newTagList.contains(tag)) {
                     articleMapper.deleteTagArticle(tag.getId());
                 }
             }
-            for (Tag tag :newTagList){
-                if (!odlTagList.contains(tag)){
-                    articleMapper.insertTagArticle(articleVo.getId(),tag.getId());
+            for (Tag tag : newTagList) {
+                if (!odlTagList.contains(tag)) {
+                    articleMapper.insertTagArticle(articleVo.getId(), tag.getId());
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             //手动回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return Result.fail(400,"修改失败",null);
+            return Result.fail(400, "修改失败", null);
         }
         return Result.success("修改成功");
+    }
+
+    @Override
+    public Result articleByUid() {
+        LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<Article> articleList = articleMapper.findArticleByUid(loginUser.getUser().getId());
+        List<ArticleVo> articleVoList;
+        if (articleList == null || articleList.size() < 1) {
+            articleVoList = null;
+        } else {
+            articleVoList = copyList(articleList, true, false, false);
+        }
+
+        return Result.success(articleVoList);
+    }
+
+    @Override
+    public Result allHome() {
+        List<Article> articles = articleMapper.findAllArticle();
+        List<ArticleVo> articleVoList = copyList(articles, false, false, true);
+        return Result.success(articleVoList);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -271,7 +294,7 @@ public class ArticleServiceimpl implements ArticleService {
             articleMapper.insertBody(articleBody);
             articleMapper.update(articleBody.getId(), article.getId());
             List<Tag> tagList = articleParam.getTags();
-            if (tagList!=null) {
+            if (tagList != null) {
                 for (Tag tag : tagList) {
                     articleMapper.insertArticleWithTag(tag.getId(), article.getId());
                 }
@@ -303,6 +326,8 @@ public class ArticleServiceimpl implements ArticleService {
     public ArticleVo copy(Article article, boolean isBody, boolean isComment, boolean isTag) {
         ArticleVo articleVo = new ArticleVo();
         BeanUtils.copyProperties(article, articleVo);
+        SysUserVo sysUserVo=sysUserService.selectUserById(article.getAuthor_id());
+        articleVo.setSysUserVo(sysUserVo);
         articleVo.setCreateDate(new DateTime(article.getCreateDate()).toString("yyyy-MM-dd HH:mm"));
         articleVo.setUpdateDate(new DateTime(article.getUpdateDate()).toString("yyyy-MM-dd HH:mm"));
         Category category = categoryService.findById(article.getCategory_id());

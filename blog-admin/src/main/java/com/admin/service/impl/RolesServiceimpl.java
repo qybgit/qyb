@@ -146,4 +146,13 @@ public class RolesServiceimpl implements RolesService {
         }
         return true;
     }
+
+    /**
+     * 根据用户id查找其角色信息
+     * @return
+     */
+    public Role findRoleByUserId(Long id){
+        Role role=roleMapper.findRoleByUserId(id);
+        return role;
+    }
 }

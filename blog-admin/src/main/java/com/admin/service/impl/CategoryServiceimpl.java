@@ -100,6 +100,17 @@ public class CategoryServiceimpl implements CategoryService {
         return  Result.success("更新成功");
     }
 
+    /**
+     * all分类
+     * @return
+     */
+    @Override
+    public Result findAlls() {
+        List<Category> categories=categoryMapper.selectAlls();
+        List<CategoryVo> categoryVoList=copyList(categories);
+        return Result.success(categoryVoList) ;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public boolean updateTag(Category category) {
         try{

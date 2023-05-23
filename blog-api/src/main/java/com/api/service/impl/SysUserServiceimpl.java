@@ -41,6 +41,10 @@ public class SysUserServiceimpl implements SysUserService {
 
     private SysUserVo copyUser(SysUser sysUser) {
         SysUserVo sysUserVo=new SysUserVo();
+        if (sysUser==null){
+            sysUserVo.setNickName("此用户已被删除");
+            return  sysUserVo;
+        }
         BeanUtils.copyProperties(sysUser,sysUserVo);
 
         return sysUserVo;

@@ -132,6 +132,13 @@ public class TagServiceimpl implements TagService {
         return  Result.success("更新成功");
 
     }
+
+    @Override
+    public Result selectAlls() {
+        List<Tag> tagList=tagMapper.selectAlls();
+        List<TagVo> tagVoList=copyList(tagList);
+        return Result.success(tagVoList);    }
+
     @Transactional(rollbackFor = Exception.class)
     public boolean updateTag(Tag tag) {
         try{
@@ -146,6 +153,7 @@ public class TagServiceimpl implements TagService {
     public boolean deleteTag(Integer id) {
         try{
             tagMapper.updateTag(id);
+            tagMapper.updateTagWithArticle(id);
         }catch (Exception e){
             throw e;
         }

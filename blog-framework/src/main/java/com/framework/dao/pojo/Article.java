@@ -12,5 +12,5 @@ public class Article {
     private int category_id;
     private long author_id;
     private int body_id;
-    private Integer del_fag;
+    private Integer del_flag;
 }

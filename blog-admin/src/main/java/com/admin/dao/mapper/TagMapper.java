@@ -13,8 +13,10 @@ import java.util.List;
 public interface TagMapper {
     @Select("select * from my_tag order by del_flag ASC,create_date  ")
     List<Tag> selectAll();
+    @Select("select * from my_tag where del_flag=0 order by del_flag ASC,create_date  ")
+    List<Tag> selectAlls();
 
-    @Select("SELECT my_tag.id,my_tag.tag_name from my_article JOIN my_tag_article ON my_article.id=my_tag_article.article_id JOIN my_tag ON my_tag_article.tag_id=my_tag.id where my_article.id=#{id}")
+    @Select("SELECT my_tag.id,my_tag.tag_name from my_article JOIN my_tag_article ON my_article.id=my_tag_article.article_id JOIN my_tag ON my_tag_article.tag_id=my_tag.id where my_article.id=#{id} and my_tag_article.del_flag=0")
     List<Tag> selectArticleById(Long id);
 
     @Select("select article_id from my_tag_article where Tag_id=#{id}" )
@@ -40,4 +42,6 @@ public interface TagMapper {
 
     @Update("update my_tag set tag_name=#{tag_Name} where id=#{id}")
     int updateTagByName(Tag tag);
+    @Update("update my_tag_article set del_flag=1 where tag_id=#{id} ")
+    void updateTagWithArticle(Integer id);
 }

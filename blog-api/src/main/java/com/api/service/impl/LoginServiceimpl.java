@@ -40,7 +40,7 @@ public class LoginServiceimpl implements LoginService {
         sysUser.setAdmin(1);
         sysUser.setType(0);
         sysUser.setNickName(account.getNickName());
-        sysUser.setAvatar(null);
+        sysUser.setAvatar("www.yuanbolife.top/839f3643-9aa7-4cac-845b-b541662f9f96.jpg");
         sysUser.setCreate_date(System.currentTimeMillis());
         sysUser.setLast_login(System.currentTimeMillis());
         sysUser.setDeleted(0);
@@ -72,9 +72,9 @@ public class LoginServiceimpl implements LoginService {
         }
 
         String token= JwtUtil.createToken(sysUser.getId());
-        TokenVo token1=new TokenVo(sysUser.getNickName(),token);
+        TokenVo token1=new TokenVo(sysUser.getNickName(),token,sysUser.getAvatar());
         redisTemplate.opsForValue().set(token, JSON.toJSONString(sysUser));
-        redisTemplate.expire(token, 60*60*8, TimeUnit.SECONDS);
+        redisTemplate.expire(token, 60 * 60 * 24, TimeUnit.SECONDS);
 
         return Result.success(token1);
     }

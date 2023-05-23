@@ -1,11 +1,14 @@
 package com.admin.controller;
 
+import com.admin.dao.pojo.LoginUser;
 import com.admin.service.SysUserService;
 import com.admin.vo.params.SysDeleteParam;
 import com.framework.vo.Result;
 import com.framework.vo.SysUserVo;
 import com.admin.vo.params.Account;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
@@ -71,5 +74,25 @@ public class AdminSysUserController {
     @GetMapping("count")
     public Result count(){
         return sysUserService.count();
+    }
+
+    /**
+     * 更改头像
+     * @param file
+     * @return
+     */
+    @PostMapping("upload")
+    public Result upload(@RequestParam("image") MultipartFile file){
+        return sysUserService.upload(file);
+    }
+
+    /**
+     * 用户详情
+     * @return
+     */
+    @GetMapping("content")
+    public Result content(){
+
+        return sysUserService.findUserById();
     }
 }

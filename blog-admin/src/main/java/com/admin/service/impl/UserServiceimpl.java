@@ -2,6 +2,7 @@ package com.admin.service.impl;
 
 
 import com.admin.dao.pojo.LoginUser;
+import com.admin.dao.pojo.Role;
 import com.admin.service.UserService;
 import com.admin.util.JwtUtil;
 
@@ -24,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceimpl implements UserService {
     @Resource
     private AuthenticationManager authenticationManager;
+    @Resource
+    RolesServiceimpl rolesServiceimpl;
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
@@ -38,8 +41,10 @@ public class UserServiceimpl implements UserService {
                 return Result.fail(500, "用户名或密码错误", null);
             }
             LoginUser user = (LoginUser) authentication.getPrincipal();
+
             String token = JwtUtil.createToken(user.getUser().getId());
-            TokenVo token1 = new TokenVo(user.getUser().getNickName(), token);
+            Role role=rolesServiceimpl.findRoleByUserId(user.getUser().getId());
+            TokenVo token1 = new TokenVo(user.getUser().getNickName(), token,role.getName());
             redisTemplate.opsForValue().set(token, JSON.toJSONString(user.getUser()));
             redisTemplate.expire(token, 60 * 60 * 24, TimeUnit.SECONDS);
 

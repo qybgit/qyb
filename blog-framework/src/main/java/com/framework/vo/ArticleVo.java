@@ -18,7 +18,8 @@ public class ArticleVo {
     private Category category;
     private ArticleBodyVo articleBodyVo;
     private List<CommentVo> commentVo;
-    private long author_id;
+    private SysUserVo sysUserVo;
     private List<Tag> tags;
+    private Integer del_flag;
 //    private int body_id;
 }

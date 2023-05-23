@@ -1,7 +1,4 @@
 package com.admin.controller;
-
-
-
 import com.admin.util.QiniuUtil;
 import com.framework.vo.ImageResult;
 import com.framework.vo.ImageVo;

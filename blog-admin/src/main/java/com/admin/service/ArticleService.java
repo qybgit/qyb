@@ -27,4 +27,8 @@ public interface ArticleService {
     Result delete(Integer id);
 
     Result updateArticle(ArticleVo articleVo);
+
+     Result articleByUid();
+
+    Result allHome();
 }

@@ -21,4 +21,6 @@ public interface TagService {
     Result delTag(Integer id);
 
     Result revise(Tag tag);
+
+    Result selectAlls();
 }

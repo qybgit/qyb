@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("admin/tag")
-
 public class AdminTagController {
     @Resource
     TagService tagService;
@@ -21,14 +20,25 @@ public class AdminTagController {
      * all tag
      */
     @GetMapping("all")
-
     public Result allTag(){
         return tagService.selectAll();
     }
+
+    /**
+     * all tag
+     */
+    @GetMapping("alls")
+    public Result allTags(){
+        return tagService.selectAlls();
+    }
+
+
     /**
      * 根据标签查文章
      */
     @GetMapping("{id}")
+    @PreAuthorize("@per.hasPermission('system:tag')")
+
     public Result tagById(@PathVariable("id")Integer id) {
         return articleService.selectArticleByTagId(id);
     }
@@ -38,8 +48,10 @@ public class AdminTagController {
      * @param
      * @return
      */
-    @PreAuthorize("@per.hasPermission('system:tag:add')")
+//    @PreAuthorize("@per.hasPermission('system:tag:add')")
     @PostMapping("add")
+    @PreAuthorize("@per.hasPermission('system:tag')")
+
     public Result addTag(@RequestBody Tag tag){
         return tagService.addTag(tag.getTag_Name());
 
@@ -58,6 +70,8 @@ public class AdminTagController {
      * @return
      */
     @DeleteMapping("delete/{id}")
+    @PreAuthorize("@per.hasPermission('system:tag')")
+
     public Result delTag(@PathVariable("id") Integer id){
         return tagService.delTag(id);
     }
@@ -68,6 +82,8 @@ public class AdminTagController {
      * @return
      */
     @PostMapping("revise")
+    @PreAuthorize("@per.hasPermission('system:tag')")
+
     public Result revise(@RequestBody Tag tag){
         return tagService.revise(tag);
     }

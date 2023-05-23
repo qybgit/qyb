@@ -14,7 +14,8 @@ public interface SysUserMapper {
     @Select("select * from  my_sys_user where id=#{to_uid}")
     SysUser selectUserById(long to_uid);
 
-    @Insert("insert into my_sys_user(account,admin,avatar,create_date,deleted,email,nickname,last_login,password,status,passwordApi) values(#{account},#{admin},#{avatar},#{create_date},#{deleted},#{email},#{nickName},#{last_login},#{password},#{status},#{passwordApi})")
+
+    @Insert("insert into my_sys_user(account,admin,avatar,create_date,deleted,email,nickname,last_login,password,status,passwordApi,type) values(#{account},#{admin},#{avatar},#{create_date},#{deleted},#{email},#{nickName},#{last_login},#{password},#{status},#{passwordApi},#{type})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     void insertUser(SysUser sysUser);
 
@@ -40,4 +41,6 @@ public interface SysUserMapper {
 
     @Update("update my_sys_user set deleted=#{del_flag} where id=#{id}")
     void updateUserState(@Param("del_flag") int del_flag, @Param("id") long id);
+    @Update("update my_sys_user set avatar=#{s} where id=#{id} ")
+    void insertAvatar(@Param("s") String s, @Param("id") long id);
 }

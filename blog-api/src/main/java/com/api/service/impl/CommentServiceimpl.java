@@ -39,7 +39,6 @@ public class CommentServiceimpl implements CommentService {
         if (comment == null)
             return null;
        List<CommentVo>  commentVo = copyCommentList(comment,id);
-       commentVo.forEach(System.out::println);
         return commentVo;
 
     }

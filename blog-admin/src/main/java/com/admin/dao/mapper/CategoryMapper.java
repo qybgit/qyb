@@ -21,6 +21,9 @@ public interface CategoryMapper {
     @Select("select id,create_date, category_name,createBy_id,del_flag from my_category  GROUP BY my_category.id order by del_flag ASC,create_date")
 
     List<Category> selectAll();
+    @Select("select id,create_date, category_name,createBy_id,del_flag from my_category where del_flag=0  GROUP BY my_category.id order by del_flag ASC,create_date")
+
+    List<Category> selectAlls();
 
     @Update("update my_category set del_flag=1 where id=#{id}")
     int updateCategory(Integer id);

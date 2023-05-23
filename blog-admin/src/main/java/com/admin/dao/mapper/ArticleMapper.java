@@ -39,7 +39,7 @@ public interface ArticleMapper {
     @Select("SELECT COUNT(*) from my_article where del_flag=0")
     int articleCount();
 
-    @Select("select * from my_article where del_flag=0")
+    @Select("select * from my_article order by del_flag ASC ")
     List<Article> alls();
 
     @Select("select my_article.id as id,title,createDate,updateDate,summary ,category_id from my_tag_article JOIN my_article ON my_article.id=my_tag_article.article_id where tag_id=#{id} and del_fag=0")
@@ -67,4 +67,8 @@ public interface ArticleMapper {
 
     @Insert("insert into my_tag_article(article_id,tag_id) values(#{article_id},#{id})")
     void insertTagArticle(@Param("article_id")Long article_id,@Param("id") Integer id);
+    @Select("select ma.id as id,title,createDate,updateDate,summary ,category_id ,body_id from my_article ma left join my_sys_user su on ma.author_id=su.id where su.id=#{id} and ma.del_flag=0")
+    List<Article> findArticleByUid(long id);
+    @Select("select id from my_article_body where article_id=#{id}")
+    Integer selectBodyIdByArticleId(Long id);
 }

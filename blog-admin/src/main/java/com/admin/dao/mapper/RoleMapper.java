@@ -43,4 +43,7 @@ public interface RoleMapper {
 
     @Insert("insert into my_sys_role(role_id,author_id) values(#{role_id} ,#{author_id})")
     void insertRoleIdByAuthorId(@Param("role_id") long role_id,@Param("author_id") long author_id);
+
+    @Select("select name,role_key from my_sys_role as sr left join my_role mr on sr.role_id=mr.id where author_id=#{id}")
+    Role findRoleByUserId(Long id);
 }

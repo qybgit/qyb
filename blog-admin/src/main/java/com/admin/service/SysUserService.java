@@ -7,6 +7,7 @@ import com.admin.vo.params.SysDeleteParam;
 import com.framework.vo.Result;
 import com.framework.vo.SysUserVo;
 import com.admin.vo.params.Account;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface SysUserService {
@@ -26,4 +27,9 @@ public interface SysUserService {
     Result delete(SysDeleteParam sysDeleteParam);
 
     Result count();
+
+    Result upload(MultipartFile file);
+
+
+    Result findUserById();
 }

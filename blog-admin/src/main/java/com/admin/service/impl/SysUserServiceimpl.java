@@ -2,10 +2,12 @@ package com.admin.service.impl;
 
 import com.admin.dao.mapper.RoleMapper;
 import com.admin.dao.mapper.SysUserMapper;
+import com.admin.dao.pojo.LoginUser;
 import com.admin.dao.pojo.Role;
 import com.admin.dao.pojo.SysUser;
 import com.admin.service.SysUserService;
 import com.admin.util.JwtUtil;
+import com.admin.util.QiniuUtil;
 import com.admin.vo.RoleVo;
 import com.admin.vo.SysUserVoAdmin;
 import com.admin.vo.params.SysDeleteParam;
@@ -18,9 +20,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -38,11 +42,13 @@ public class SysUserServiceimpl implements SysUserService {
     BCryptPasswordEncoder bCryptPasswordEncoder;
     @Resource
     RoleMapper roleMapper;
+    @Resource
+    QiniuUtil qiniuUtil;
 
     @Override
     public SysUserVo selectUserById(long to_uid) {
         SysUser sysUser = sysUserMapper.selectUserById(to_uid);
-        return copyUser(sysUser);
+        return copyUser(sysUser,false);
     }
 
     @Override
@@ -159,6 +165,38 @@ public class SysUserServiceimpl implements SysUserService {
         int count=sysUserMapper.selectAllUserDeleted();
         return Result.success(count);
     }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result upload(MultipartFile file) {
+        LoginUser loginUser= (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String fileName= UUID.randomUUID()+"."+ StringUtils.substringAfterLast(file.getOriginalFilename(),".");
+        boolean upload=qiniuUtil.upload(file,fileName);
+        while (upload){
+           if (insertAvatar((QiniuUtil.url+"/"+fileName),(loginUser.getUser().getId()))){
+                return Result.success("更新成功");
+            }
+        }
+        return Result.fail(400,"更新失败",null);
+    }
+
+    @Override
+    public Result findUserById() {
+        LoginUser loginUser= (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SysUser sysUser = sysUserMapper.selectUserById(loginUser.getUser().getId());
+        return Result.success(copyUser(sysUser,true));
+    }
+
+
+    private boolean insertAvatar(String s, long id) {
+        try
+        {
+            sysUserMapper.insertAvatar(s,id);
+        }catch (Exception e){
+            throw  e;
+        }
+        return true;
+    }
+
 
     private boolean insertUser(SysUser sysUser, Role role) {
         try {
@@ -202,10 +240,18 @@ public class SysUserServiceimpl implements SysUserService {
         return true;
     }
 
-    private SysUserVo copyUser(SysUser sysUser) {
+    private SysUserVo copyUser(SysUser sysUser, boolean isRole) {
         SysUserVo sysUserVo = new SysUserVo();
-        BeanUtils.copyProperties(sysUser, sysUserVo);
 
+        if (sysUser==null){
+            sysUserVo.setNickName("用户已删除");
+            return sysUserVo;
+        }
+        BeanUtils.copyProperties(sysUser, sysUserVo);
+        if (isRole){
+            Role role = roleMapper.findRoleByUserId(sysUser.getId());
+            sysUserVo.setRoleName(role.getName());
+        }
         return sysUserVo;
 
     }

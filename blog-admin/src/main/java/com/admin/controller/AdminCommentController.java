@@ -7,6 +7,7 @@ import com.admin.service.CommentService;
 import com.admin.vo.params.Search;
 import com.framework.vo.Result;
 import com.framework.vo.params.CommentParam;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -45,6 +46,8 @@ public class AdminCommentController {
      * @return
      */
     @PostMapping("delete/{id}")
+    @PreAuthorize("@per.hasPermission('system:comment')")
+
     public Result delete(@PathVariable("id") Integer id){
         return commentService.delete(id);
     }

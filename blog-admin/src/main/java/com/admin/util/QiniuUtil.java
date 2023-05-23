@@ -25,7 +25,7 @@ public class QiniuUtil {
     @Value("${bucket}")
     private String bucket;
     String key = null;//默认不指定key的情况下，以文件内容的hash值作为文件名
-    public static final String url="www.yuanbolife.top";
+    public static final String url="image.yuanbolife.top";
 
     public boolean upload(MultipartFile file, String fileName) {
         //构造一个带指定 Region 对象的配置类//    cfg.resumableUploadAPIVersion = Configuration.ResumableUploadAPIVersion.V2;// 指定分片上传版本

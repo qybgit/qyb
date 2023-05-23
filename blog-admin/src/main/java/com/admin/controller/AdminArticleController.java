@@ -28,7 +28,7 @@ public class AdminArticleController {
      * @param id
      * @return
      */
-    @RequestMapping("{id}")
+    @GetMapping("{id}")
     public Result article(@PathVariable("id") Integer id) {
         return articleService.findArticle(id);
     }
@@ -53,9 +53,22 @@ public class AdminArticleController {
 
     }
 
-    @PostMapping("alls")
+    /**
+     * 获取文章不包括内容
+     * @return
+     */
+    @GetMapping("alls")
     public Result alls(){
         return articleService.alls();
+    }
+
+    /**
+     * 获取文章数据只包括标签
+     * @return
+     */
+    @GetMapping("homeArticle")
+    public Result allHome(){
+        return articleService.allHome();
     }
 
     /**
@@ -76,5 +89,14 @@ public class AdminArticleController {
     @PostMapping("updateArticle")
     public Result updateArticle(@RequestBody ArticleVo articleVo){
         return articleService.updateArticle(articleVo);
+    }
+
+    /**
+     * 用户文章
+     * @return
+     */
+    @GetMapping("myArticle")
+    public Result articleByUid(){
+        return articleService.articleByUid();
     }
 }
